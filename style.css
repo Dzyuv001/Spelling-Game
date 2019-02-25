@@ -1,0 +1,138 @@
+body {
+    background-color: #eee;
+}
+
+.container , li{
+    background-color: #fff;
+    padding: 20px;
+    margin: 10px auto;
+    border-radius: 5px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+}
+
+section {
+    display: none;
+    padding: 20px 0 0;
+    border-top: 1px solid #abc;
+}
+
+#tab1, #tab2 {
+    opacity: 0;
+    width: 0px;
+    height: 0px;
+}
+
+#tab1:checked~#content1, #tab2:checked~#content2 {
+    display: block;
+}
+
+#tab1:checked~#tab1Label, #tab2:checked~#tab2Label {
+    color: #0af;
+    border: 1px solid #abc;
+    border-top: 2px solid #0af;
+    border-bottom: 1px solid #fff;
+}
+
+#tab1:checked~#tab1Label {
+    margin-left: -5px;
+}
+
+#tab2:checked~#tab2Label {
+    margin-right: -5px;
+}
+
+.tabLabel {
+    margin: 0px;
+    display: inline-block;
+    width: 49%;
+    text-align: center;
+    border-bottom: 1px solid #abc;
+    margin: 0 0 -1px;
+}
+
+ol {
+    padding: 0px;
+}
+
+.controls {
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+#btnCheck {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+#txtWords {
+    text-align: center;
+    font-size: 1.5em;
+}
+
+#txtWords:focus {
+    outline: none;
+}
+
+#txtScore {
+    text-align: right;
+    font-size: 2em;
+    font-weight: 600;
+}
+
+#wrongScore {
+    color: #900;
+}
+
+#rightScore {
+    color: #090;
+}
+
+#btnAddQuestionOption, #btnSaveList{
+    float: right;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+#txtEditWordList{
+    width:auto;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+#wordList {
+    list-style-type: none;
+    counter-reset: elemC;
+    padding-left: 0;
+}
+
+#wordList>li:before {
+    content: counter(elemC) ".";
+    counter-increment: elemC;
+}
+
+ol {
+    list-style: none;
+}
+
+li.wordContainer {
+    margin-top: 15px;
+    max-width: 47.68%;
+    display: inline-block;
+    margin: 15px 1% 15px 1%;
+}
+
+label {
+    width: 100%;
+    padding-left: 10px;
+    padding-top:10px;
+}
+
+.btnDeleteWord {
+    float: right;
+}
+
+.txtWordError, .txtExampleSentenceError, 
+.txtDefinitionError, #txtWordListNameError {
+    color: #900;
+    display: none;
+}

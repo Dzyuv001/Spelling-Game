@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+        crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+        crossorigin="anonymous"></script>
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="style.css">
+    <title>Spelling Game</title>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="container top">
+            <input id="tab1" type="radio" name="tabs" checked>
+            <label class="tabLabel" id="tab1Label" for="tab1">Spelling List</label>
+            <input id="tab2" type="radio" name="tabs">
+            <label class="tabLabel" id="tab2Label" for="tab2">Spelling game</label>
+            <section id="content1">
+                <h1 class="text-center">Spelling game</h1>
+                <div class="game-elements">
+                    <!-- <p id="textText">Test text</p> -->
+                    <p id="txtScore">Scores : <span id="rightScore">0</span> <span id="wrongScore">0</span></p>
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" id="txtWords" name="txtWord" placeholder="spell here"
+                            autocomplete="off" onfocus="this.placeholder = ''" onblur="this.placeholder = 'spell here'">
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary" type="button" id="btnCheck">Check</button>
+                        </div>
+                    </div>
+                    <div class="controls">
+                        <button type="button" id="btnRepeat" class="btn btn-primary">Repeat</button>
+                        <button type="button" id="btnSentece" class="btn btn-primary">Use in Sentence</button>
+                        <button type="button" id="btnDefinition" class="btn btn-primary">Definition</button>
+                    </div>
+                </div>
+                <div class="controls">
+                    <button type="button" id="btnStart" class="btn btn-primary">Start Game</button>
+                </div>
+
+                <div class="container">
+                    <p id="txtDescription"> This will be the description of the game</p>
+                </div>
+            </section>
+            <section id="content2">
+                <div id="wordListControls">
+                    <label id="txtEditWordList" for="btnEditWordList">Edit word list</label>
+                    <input type="file" id="btnEditWordList" name="btnEditQuiz" accept="text/json">
+                    <button class="btn btn-primary" id="btnSaveList">Save List</button>                    
+                    <button class="btn btn-primary" id="btnAddWordUI">+ Add Word</button>
+                </div>
+                <div>
+                    <label for="">Word list name</label>
+                    <input type="text" class="form-control" id="txtWordListName" placeholder="Word list name">
+                    <p id="txtWordListNameError">The list title textbox can't be blank.</p>
+                </div>
+                <div id="uiForWordList">
+                    <ol id="wordList" ondrop="drop(event)" ondragover="allowDrop(event)">
+                        <li class="wordContainer col-md-6 col-sm-12" draggable="true" ondragstart="drag(event)">
+                            <button class="btn btn-danger btnDeleteWord">Delete Word</button>
+                            <label for="txtWord">Word</label>
+                            <input type="text" class="form-control txtWord" placeholder="Word">
+                            <p class="txtWordError">The word textbox can't be blank.</p>
+                            <label for="txtExampleSentence">Example Sentence</label>
+                            <input type="text" class="form-control txtExampleSentence" placeholder="Example Sentence">
+                            <p class="txtExampleSentenceError">The example sentence textbox can't be blank.</p>
+                            <label for="txtDefinition">Definition</label>
+                            <input type="text" class="form-control txtDefinition" placeholder="Word Definition">
+                            <p class="txtDefinitionError">The definition textbox can't be blank.</p>
+                        </li>
+                    </ol>
+                </div>
+            </section>
+        </div>
+        <script src="main.js"></script>
+</body>
+
+</html>
