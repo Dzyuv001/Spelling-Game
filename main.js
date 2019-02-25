@@ -82,7 +82,7 @@ $(document).ready(function () {
   var dataController = (function () { // Model
     var editWordList;
     var textWordList;
-    var activeTab;
+    var activeTab = true;
     var wordCount = 0; // how many words to spell
     var rightScore = 0; // how many words where spelled correctly
     var wrongScore = 0; // how many words where spelled incorrectly
@@ -129,7 +129,6 @@ $(document).ready(function () {
       btnDefinition: $("#btnDefinition"),
       btnSaveList: $("#btnSaveList"),
       wordList: $("#wordList"),
-      txtWords: $("#txtWords"),
       btnEditWordList: $("#btnEditWordList"),
       btnAddWordUI: $("#btnAddWordUI"),
       wordContainer: ".wordContainer",
@@ -180,7 +179,8 @@ $(document).ready(function () {
           $(that).removeClass("is-invalid");
           $(that).parent().find(errorClass).hide();
         }
-
+      },getWordHTML: function(){
+        return wordHTML;
       }
     };
   })();
@@ -191,10 +191,12 @@ $(document).ready(function () {
     var events = function () {
       uiElems.tab1Label.on("click", function () {
         dataCtrl.setActiveTab(true);
+        console.log("spelling list");
       });
 
       uiElems.tab2Label.on("click", function () {
         dataCtrl.setActiveTab(false);
+        console.log("spelling game");
       });
 
       uiElems.btnStart.on("click", function (e) {
@@ -224,7 +226,7 @@ $(document).ready(function () {
         }
       });
 
-      uiElems.btnEditWordList.on("click", editWordList);
+      uiElems.btnEditWordList.on("change", editWordList);
 
       uiElems.btnSaveList.on("click", function () {
         saveList();
@@ -258,36 +260,33 @@ $(document).ready(function () {
     var onReaderLoad = function (e) {
       //used to get data from downloaded JSON file and save it into a data structure
       dataCtrl.setWordListData(JSON.parse(e.target.result));
-      console.log(JSON.parse(e.target.result) + "hello");
     };
 
     var onChange = function (e) { //used to set up the download for the JSON file
+      var file = event.target.files[0];
       var reader = new FileReader();
       reader.onload = onReaderLoad;
-      reader.readAsText(e.target.files[0]);
+      reader.readAsText(file);
     };
     var editWordList = function (e) { //start the process to the spelling word list
       onChange(e);
       setTimeout(function () { // a timer used to give enough time for the JSON file to be read.
-        //loadQuizElements();
-      }, 2000);
+        loadWordList();
+      }, 1000);
     };
 
-    var loadQuizElements = function () {
-      //used to set up the quiz maker form os that a quiz can be edited
-      let quizBuildData = dataCtrl.getQuizBuildData();
-      uiElem.txtTitle.val(quizBuildData.quizTitle);
-      uiElem.editQuestions.empty();
-      quizBuildData.questions.forEach(function (q, i) {
-        uiElem.editQuestions.append(UICtrl.getQuestionHTML);
-        var qCon = $($(".questionContainer")[i]);
-        qCon.find(".questionText").val(q.question);
-        q.options.forEach(function (o, j) {
-          qCon.find("ol").append((UICtrl.getOptionHTML));
-          var oCon = $(qCon.find("li")[j]);
-          oCon.find(".optionText").val(o.op);
-          oCon.find(".chkCorrect").prop("checked", o.chk);
-        });
+    var loadWordList = function () {
+      // used to set up the quiz maker form os that a quiz can be edited
+      let wordListData = dataCtrl.getEditWordList();
+      console.log(wordListData);
+      uiElems.txtWordListName.val(wordListData.title);
+      uiElems.wordList.empty();
+      wordListData.words.forEach(function (w, i) {
+        uiElems.wordList.append(UICtrl.getWordHTML());
+        var qCon = $($(uiElems.wordContainer)[i]);
+        qCon.find(uiElems.txtWord).val(w.word);
+        qCon.find(uiElems.txtExampleSentence).val(w.exampleSentence);
+        qCon.find(uiElems.txtDefinition).val(w.definition);
       });
     };
 
@@ -298,6 +297,7 @@ $(document).ready(function () {
       });
       a.href = URL.createObjectURL(file);
       a.download = fileName;
+      console.log(a);
       a.click();
     };
 
@@ -318,7 +318,7 @@ $(document).ready(function () {
         var textBoxData = $(w).find('input[type="text"]'); //making sure that no user plugins cause issues
         wordListData.words.push({
           "word": $(textBoxData[0]).val(),
-          "ExampleSentence": $(textBoxData[1]).val(),
+          "exampleSentence": $(textBoxData[1]).val(),
           "definition": $(textBoxData[2]).val()
         });
       });
@@ -326,35 +326,32 @@ $(document).ready(function () {
     };
 
     var isWordListValid = function () {
-      var isValid = true;
+      var isValid = true;// if at any point this changes to false the game will not save
       if (uiElems.txtWordListName.val() === "") {
         isValid = false;
         UICtrl.validateTxt("#txtWordListNameError", uiElems.txtWordListName);
       }
-      $(uiElems.txtWord).each(function (i, w) {
-        if ($(w).val() === "") {
-          isValid = false;
-          UICtrl.validateTxt("#txtWordError", this);
-        }
-      });
-      $(uiElems.txtExampleSentence).each(function (i, w) {
-        if ($(w).val() === "") {
-          isValid = false;
-          UICtrl.validateTxt("#txtWordError", this);
-        }
-      });
-      $(uiElems.txtDefinition).each(function (i, w) {
-        if ($(w).val() === "") {
-          isValid = false;
-          UICtrl.validateTxt("#txtWordError", this);
-        }
-      });
-      return false;
-
+      isValid = isValidUIData(uiElems.txtWord, ".txtWordError", isValid);
+      isValid = isValidUIData(uiElems.txtExampleSentence, ".txtExampleSentenceError", isValid);
+      isValid = isValidUIData(uiElems.txtDefinition, ".txtDefinitionError", isValid);
+      if ($(uiElems.wordContainer).length === 0){
+        isValid = false;
+      }
+      return isValid;
     };
 
-    var isValidUIData = function (that) {
-
+    var isValidUIData = function (elem, error, isValid) {
+      var valid = true;
+      $(elem).each(function () {
+        if ($(this).val() === "") {
+          UICtrl.validateTxt(error, this);
+          valid = false;
+        }
+      });
+      if (isValid) {
+        return valid;
+      }
+      return isValid;
     };
 
     var checkSpelling = function () {
