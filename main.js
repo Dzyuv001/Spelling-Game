@@ -69,21 +69,13 @@ var btnSentece = $("#btnSentece");
 var btnDefinition = $("#btnDefinition");
 var txtWords = $("#txtWords");
 
-function stringCleaner(saidLetters) { // used to sanitise use input string
-  saidLetters = saidLetters.toLowerCase().match(/[a-z]/g).join('');
-}
-
-function scoreUpdate() {
-  txtRightScore.text(rightScore);
-  txtWrongScore.text(wrongScore);
-}
-
 $(document).ready(function () {
   var dataController = (function () { // Model
     var editWordList;
     var textWordList;
     var activeTab = true;
-    var wordCount = 0; // how many words to spell
+    var totalWords;
+    var wordCount = 0; // how many words have been spelled
     var rightScore = 0; // how many words where spelled correctly
     var wrongScore = 0; // how many words where spelled incorrectly
 
@@ -104,6 +96,19 @@ $(document).ready(function () {
       getTextWordList: function () {
         return textWordList;
       },
+      updateScore: function (right){
+        if (right){
+          rightScore++;
+        }else {
+          wrongScore++;
+        }
+        wordCount++;
+        return {rightScore: rightScore,
+          wrongScore: wrongScore};
+      },
+      gameFinished: function(){
+        return totalWords === wordCount;
+      },
       resetData: function () {
         wordCount = 0;
         rightScore = 0;
@@ -123,6 +128,7 @@ $(document).ready(function () {
       txtWrongScore: $("#wrongScore"), // displays incorrect answers
       txtWords: $("#txtWords"),
       btnStart: $("#btnStart"),
+      btnLoadWords: $("#btnLoadWords"),
       btnCheck: $("#btnCheck"),
       btnRepeat: $("#btnRepeat"),
       btnSentece: $("#btnSentece"),
@@ -181,6 +187,9 @@ $(document).ready(function () {
         }
       },getWordHTML: function(){
         return wordHTML;
+      },scoreUpdate: function (rightScore, wrongScore) {
+        txtRightScore.text(rightScore);
+        txtWrongScore.text(wrongScore);
       }
     };
   })();
@@ -198,6 +207,8 @@ $(document).ready(function () {
         dataCtrl.setActiveTab(false);
         console.log("spelling game");
       });
+
+      uiElems.btnLoadWords.on("change", getWordList);
 
       uiElems.btnStart.on("click", function (e) {
         readOutLoud(words[wordCount].word);
@@ -268,12 +279,18 @@ $(document).ready(function () {
       reader.onload = onReaderLoad;
       reader.readAsText(file);
     };
+
+    var getWordList = function (e){
+      onChange(e);
+    }
+
     var editWordList = function (e) { //start the process to the spelling word list
       onChange(e);
       setTimeout(function () { // a timer used to give enough time for the JSON file to be read.
         loadWordList();
       }, 1000);
     };
+
 
     var loadWordList = function () {
       // used to set up the quiz maker form os that a quiz can be edited
@@ -358,11 +375,9 @@ $(document).ready(function () {
       if (wordCount < 10) { // TODO change to based on text value
         if (txtWords.val() !== "") { // check if blank
           if (txtWords.val().toLowerCase() === words[wordCount].word) {
-            rightScore += 1;
-            scoreUpdate();
+            UICtrl.scoreUpdate(dataCtrl.updateScore(true));
           } else {
-            wrongScore += 1;
-            scoreUpdate();
+            UICtrl.scoreUpdate(dataCtrl.updateScore(false));
           }
           wordCount += 1;
           textText.text(words[wordCount].word);

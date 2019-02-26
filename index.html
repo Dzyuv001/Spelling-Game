@@ -43,24 +43,23 @@
                     </div>
                 </div>
                 <div class="controls">
-                    <button type="button" id="btnStart" class="btn btn-primary">Start Game</button>
+                        <label id="txtLoadWordList" for="btnLoadWords">Load Spellings</label>
+                        <input type="file" id="btnLoadWords" name="btnLoadWords" accept="text/json"> <button type="button" id="btnStart" class="btn btn-primary">Start Game</button>
                 </div>
 
                 <div class="container">
-                    <p id="txtDescription"> This will be the description of the game</p>
+                    <p id="txtDescription"> This will be the description of the game.</p>
                 </div>
             </section>
             <section id="content2">
                 <div id="wordListControls">
                     <label id="txtEditWordList" for="btnEditWordList">Edit word list</label>
-                    <input type="file" id="btnEditWordList" name="btnEditQuiz" accept="text/json">
+                    <input type="file" id="btnEditWordList" name="btnEditWordList" accept="text/json">
                     <button class="btn btn-primary" id="btnSaveList">Save List</button>                    
                     <button class="btn btn-primary" id="btnAddWordUI">+ Add Word</button>
                 </div>
                 <div>
-                    <label for="">Word list name</label>
-                    <input type="text" class="form-control" id="txtWordListName" placeholder="Word list name">
-                    <p id="txtWordListNameError">The list title textbox can't be blank.</p>
+                   <p id="txtWordListNameError">The list title textbox can't be blank.</p>
                 </div>
                 <div id="uiForWordList">
                     <ol id="wordList" ondrop="drop(event)" ondragover="allowDrop(event)">
