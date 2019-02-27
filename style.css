@@ -64,12 +64,12 @@ ol {
     border-bottom-left-radius: 0;
 }
 
-#txtWords {
+#txtSpelledWord {
     text-align: center;
     font-size: 1.5em;
 }
 
-#txtWords:focus {
+#txtSpelledWord:focus {
     outline: none;
 }
 
