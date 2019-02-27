@@ -96,17 +96,28 @@ $(document).ready(function () {
       getTextWordList: function () {
         return textWordList;
       },
-      updateScore: function (right){
-        if (right){
+      getWord: function () {
+        return textWordList.words[wordCount].word;
+      },
+      getExampleSentence: function () {
+        return textWordList.words[wordCount].exampleSentence;
+      },
+      getDefinition: function () {
+        return textWordList.words[wordCount].definition;
+      },
+      updateScore: function (right) {
+        if (right) {
           rightScore++;
-        }else {
+        } else {
           wrongScore++;
         }
         wordCount++;
-        return {rightScore: rightScore,
-          wrongScore: wrongScore};
+        return {
+          rightScore: rightScore,
+          wrongScore: wrongScore
+        };
       },
-      gameFinished: function(){
+      gameFinished: function () {
         return totalWords === wordCount;
       },
       resetData: function () {
@@ -173,8 +184,8 @@ $(document).ready(function () {
         $(wordHTML).appendTo(uiElems.wordList); //.hide();
         // $("#wordList li:last-child").fadeIn()
       },
-      deleteWord: function (e, that) {
-        $(that).parent().remove();
+      deleteWord: function () {
+        $(this).parent().remove();
       },
       validateTxt: function (errorClass, that) {
         //used to inform the user if they left a textbox blank
@@ -185,9 +196,11 @@ $(document).ready(function () {
           $(that).removeClass("is-invalid");
           $(that).parent().find(errorClass).hide();
         }
-      },getWordHTML: function(){
+      },
+      getWordHTML: function () {
         return wordHTML;
-      },scoreUpdate: function (rightScore, wrongScore) {
+      },
+      scoreUpdate: function (rightScore, wrongScore) {
         txtRightScore.text(rightScore);
         txtWrongScore.text(wrongScore);
       }
@@ -197,58 +210,43 @@ $(document).ready(function () {
 
   var controller = (function (dataCtrl, UICtrl) {
     var uiElems = UICtrl.getUIElems();
-    var events = function () {
-      uiElems.tab1Label.on("click", function () {
+    var events = function () { // store all the events
+      uiElems.tab1Label.on("click", function () { // changes the active tab so that the correct data structure is used
         dataCtrl.setActiveTab(true);
         console.log("spelling list");
       });
 
-      uiElems.tab2Label.on("click", function () {
+      uiElems.tab2Label.on("click", function () { // changes the active tab so that the correct data structure is used
         dataCtrl.setActiveTab(false);
         console.log("spelling game");
       });
 
-      uiElems.btnLoadWords.on("change", getWordList);
+      uiElems.btnLoadWords.on("change", getWordList); //event that sets off the spelling list getting process 
+      uiElems.btnStart.on("click", getWord); //used to get a word from the data structure
+      uiElems.btnCheck.on("click", checkSpelling); //used to check the spelling
+      uiElems.btnRepeat.on("click", getWord); // gets the word from the data structure so that the user can hear it again
 
-      uiElems.btnStart.on("click", function (e) {
-        readOutLoud(words[wordCount].word);
+      uiElems.btnDefinition.on("click", function () {//used to trigger the 
+        readOutLoud(dataCtrl.getDefinition);
       });
 
-      uiElems.btnCheck.on("click", function (e) { // will reapet the currnet word 
-        checkSpelling();
+      uiElems.btnSentece.on("click", function () {
+        readOutLoud(dataCtrl.getExampleSentence);
       });
 
-      uiElems.btnRepeat.on("click", function (e) {
-        readOutLoud(words[wordCount].word);
-      });
-
-      uiElems.btnDefinition.on("click", function (e) {
-        readOutLoud(words[wordCount].definition);
-      });
-
-      uiElems.btnSentece.on("click", function (e) {
-        readOutLoud(words[wordCount].sentence);
-      });
-
-      uiElems.txtWords.bind("keyup", function (e) {
+      uiElems.txtWords.bind("keyup", function (e) { //keyboard event used to start the spelling check
         e.preventDefault();
         if (e.keyCode === 13) { // Number 13 is the "Enter" key on the keyboard
           checkSpelling();
         }
       });
 
-      uiElems.btnEditWordList.on("change", editWordList);
+      uiElems.btnEditWordList.on("change", editWordList); //event used to start the word List getting process for editing the word
+      uiElems.btnSaveList.on("click", saveList); //event that start the saving of the list
+      uiElems.btnAddWordUI.on("click", UICtrl.addWord); //start the process of adding ui elements for a word in a spelling game list
+      uiElems.wordList.on("click", uiElems.btnDeleteWord, UICtrl.deleteWord);//start the process to remove a words ui elements
 
-      uiElems.btnSaveList.on("click", function () {
-        saveList();
-      });
-
-      uiElems.btnAddWordUI.on("click", UICtrl.addWord);
-
-      uiElems.wordList.on("click", uiElems.btnDeleteWord, function (e) {
-        UICtrl.deleteWord(e, this);
-      });
-
+      //events that trigger validation to show error message when textbox are left blank.
       uiElems.txtWordListName.on("input", function () {
         UICtrl.validateTxt("#txtWordListNameError", this);
       });
@@ -264,8 +262,10 @@ $(document).ready(function () {
       uiElems.wordList.on("input", uiElems.txtDefinition, function (e) {
         UICtrl.validateTxt(".txtDefinitionError", this);
       });
+    };
 
-
+    var getWord = function () {// used to reduce the amount of code in the event declarations
+      return dataCtrl.getWord();
     };
 
     var onReaderLoad = function (e) {
@@ -280,9 +280,9 @@ $(document).ready(function () {
       reader.readAsText(file);
     };
 
-    var getWordList = function (e){
+    var getWordList = function (e) {
       onChange(e);
-    }
+    };
 
     var editWordList = function (e) { //start the process to the spelling word list
       onChange(e);
@@ -292,8 +292,7 @@ $(document).ready(function () {
     };
 
 
-    var loadWordList = function () {
-      // used to set up the quiz maker form os that a quiz can be edited
+    var loadWordList = function () {// used to set up the quiz maker form os that a quiz can be edited
       let wordListData = dataCtrl.getEditWordList();
       console.log(wordListData);
       uiElems.txtWordListName.val(wordListData.title);
@@ -307,7 +306,7 @@ $(document).ready(function () {
       });
     };
 
-    var download = function (content, fileName, contentType) { //used for file download 
+    var download = function (content, fileName, contentType) {//used for file download 
       var a = document.createElement("a");
       var file = new Blob([content], {
         type: contentType
@@ -318,7 +317,7 @@ $(document).ready(function () {
       a.click();
     };
 
-    var saveList = function () { //saves the word list
+    var saveList = function () {//saves the word list
       if (isWordListValid()) {
         var wordListData = getWordListData();
         var jsonData = JSON.stringify(wordListData);
@@ -326,7 +325,7 @@ $(document).ready(function () {
       }
     };
 
-    var getWordListData = function () { // used to collect the data that user entered
+    var getWordListData = function () {//used to collect the data that user entered
       var wordListData = {};
       wordListData.title = uiElems.txtWordListName.val();
       wordListData.words = [];
@@ -343,7 +342,7 @@ $(document).ready(function () {
     };
 
     var isWordListValid = function () {
-      var isValid = true;// if at any point this changes to false the game will not save
+      var isValid = true; //if at any point this changes to false the game will not save
       if (uiElems.txtWordListName.val() === "") {
         isValid = false;
         UICtrl.validateTxt("#txtWordListNameError", uiElems.txtWordListName);
@@ -351,7 +350,7 @@ $(document).ready(function () {
       isValid = isValidUIData(uiElems.txtWord, ".txtWordError", isValid);
       isValid = isValidUIData(uiElems.txtExampleSentence, ".txtExampleSentenceError", isValid);
       isValid = isValidUIData(uiElems.txtDefinition, ".txtDefinitionError", isValid);
-      if ($(uiElems.wordContainer).length === 0){
+      if ($(uiElems.wordContainer).length === 0) {
         isValid = false;
       }
       return isValid;
@@ -372,7 +371,7 @@ $(document).ready(function () {
     };
 
     var checkSpelling = function () {
-      if (wordCount < 10) { // TODO change to based on text value
+      if (data) {//TODO change to based on text value
         if (txtWords.val() !== "") { // check if blank
           if (txtWords.val().toLowerCase() === words[wordCount].word) {
             UICtrl.scoreUpdate(dataCtrl.updateScore(true));
@@ -390,8 +389,7 @@ $(document).ready(function () {
       txtWords.val("");
     };
 
-    //Speech Synthesis 
-    var readOutLoud = function (message) {
+    var readOutLoud = function (message) {//Speech Synthesis 
       var speech = new SpeechSynthesisUtterance();
       // Set the text and voice attributes.
       speech.text = message;
@@ -400,11 +398,6 @@ $(document).ready(function () {
       speech.pitch = 1;
       window.speechSynthesis.speak(speech);
     };
-
-    var init = function () {
-      textText.text(words[wordCount].word);
-    };
-
 
     return {
       init: function () {
