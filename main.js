@@ -82,6 +82,9 @@ $(document).ready(function () {
       txtSpelledWord: $("#txtSpelledWord"),
       spellingGameControls: $("#spellingGameControls"),
       btnStart: $("#btnStart"),
+      btnRestart: $("#btnRestart"),
+      btnLoadAnother: $("#btnLoadAnother"),
+      txtLoadWordList: $("#txtLoadWordList"),
       btnLoadWords: $("#btnLoadWords"),
       btnCheck: $("#btnCheck"),
       btnRepeat: $("#btnRepeat"),
@@ -175,11 +178,22 @@ $(document).ready(function () {
         console.log("spelling game");
       });
 
-      uiElems.btnLoadWords.on("change", getWordList); //event that sets off the spelling list getting process 
-      uiElems.btnStart.on("click", function(){//used to get a word from the data structure
+      uiElems.btnLoadWords.on("change", function () { //event that sets off the spelling list getting process 
+        getWordList();
+        uiElems.btnStart.show();
+        uiElems.txtLoadWordList.hide();
+        uiElems.btnLoadWords.hide();
+      });
+      uiElems.btnStart.on("click", function () { //used to get a word from the data structure
         getWord();
+        UICtrl.setUpSpellingGameUI();
+        uiElems.btnStart.hide();
+        uiElems.btnRestart.show();
+        uiElems.btnLoadAnother.show();
         uiElems.spellingInput.css('display', 'flex');
       });
+      uiElems.btnRestart.on("click", restartSpelling);
+      uiElems.btnLoadAnother.on("click", loadAnotherSpellingTest);
       uiElems.btnCheck.on("click", checkSpelling); //used to check the spelling
       uiElems.btnRepeat.on("click", getWord); // gets the word from the data structure so that the user can hear it again
 
@@ -239,8 +253,6 @@ $(document).ready(function () {
 
     var getWordList = function (e) {
       onChange(e);
-      UICtrl.setUpSpellingGameUI();
-
     };
 
     var editWordList = function (e) { //start the process to the spelling word list
@@ -292,7 +304,6 @@ $(document).ready(function () {
           "definition": $(textBoxData[2]).val()
         });
       });
-
       return wordListData;
     };
 
@@ -326,7 +337,7 @@ $(document).ready(function () {
     };
 
     var readWord = function () {
-      readOutLoud(dataCtrl.getWord);
+      readOutLoud(dataCtrl.getWord());
     };
 
     var checkSpelling = function () {
@@ -347,6 +358,22 @@ $(document).ready(function () {
         }
       }
       UICtrl.clearSpelling();
+    };
+
+    var restartSpelling = function () {
+      dataCtrl.resetData();
+      UICtrl.setUpSpellingGameUI();
+      readWord();
+    };
+
+    var loadAnotherSpellingTest = function () {
+      restartSpelling(); // TODO : clean this up 
+      uiElems.spellingInput.hide();
+      uiElems.spellingGameControls.hide();
+      uiElems.btnRestart.hide();
+      uiElems.btnLoadAnother.hide();
+      uiElems.txtLoadWordList.hide();
+      uiElems.btnLoadWords.hide();
     };
 
     var readOutLoud = function (message) { //Speech Synthesis 
