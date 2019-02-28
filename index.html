@@ -29,14 +29,14 @@
                 <div class="game-elements">
                     <p id="textText">Test text</p>
                     <p id="txtScore">Scores : <span id="rightScore">0</span> <span id="wrongScore">0</span></p>
-                    <div class="input-group mb-3">
+                    <div id="spellingInput" class="input-group mb-3">
                         <input type="text" class="form-control" id="txtSpelledWord" name="txtSpelledWord" placeholder="spell here"
                             autocomplete="off" onfocus="this.placeholder = ''" onblur="this.placeholder = 'spell here'">
                         <div class="input-group-append">
                             <button class="btn btn-outline-secondary" type="button" id="btnCheck">Check</button>
                         </div>
                     </div>
-                    <div class="controls">
+                    <div  id="spellingGameControls" class="controls">
                         <button type="button" id="btnRepeat" class="btn btn-primary">Repeat</button>
                         <button type="button" id="btnSentece" class="btn btn-primary">Use in Sentence</button>
                         <button type="button" id="btnDefinition" class="btn btn-primary">Definition</button>

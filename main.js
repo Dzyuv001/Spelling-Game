@@ -51,7 +51,13 @@ $(document).ready(function () {
           wrongScore: wrongScore
         };
       },
-      gameFinished: function () {//compares the number of words spelled to how many words left to spell
+      getFinalScore: function () {
+        return {
+          rightScore: rightScore,
+          totalWords: totalWords
+        };
+      },
+      gameFinished: function () { //compares the number of words spelled to how many words left to spell
         console.log(totalWords + " and " + wordCount);
         return (totalWords > wordCount);
       },
@@ -70,9 +76,11 @@ $(document).ready(function () {
       tab2Label: $("#tab2Label"),
       textText: $("#textText"),
       txtScore: $("#txtScore"),
-      txtRightScore: $("#rightScore"), // displays correct answers
-      txtWrongScore: $("#wrongScore"), // displays incorrect answers
+      txtRightScore: "#rightScore", // displays correct answers
+      txtWrongScore: "#wrongScore", // displays incorrect answers
+      spellingInput: $("#spellingInput"),
       txtSpelledWord: $("#txtSpelledWord"),
+      spellingGameControls: $("#spellingGameControls"),
       btnStart: $("#btnStart"),
       btnLoadWords: $("#btnLoadWords"),
       btnCheck: $("#btnCheck"),
@@ -114,13 +122,20 @@ $(document).ready(function () {
     return {
       getUIElems: function () {
         return uiElems;
-      },displayFinalScore: function(){
-        uiElems.txtScore.text("you got " + rightScore + " out of " + wordCount);
+      },
+      setUpSpellingGameUI: function () {
+        uiElems.txtScore.html('Scores : <span id="rightScore">0</span> ' +
+          '<span id="wrongScore">0</span>');
+        uiElems.spellingGameControls.show();
+      },
+      displayFinalScore: function (scores) {
+        uiElems.txtScore.text("You got " + scores.rightScore + " out of " + scores.totalWords);
       },
       addWord: function () {
         $(wordHTML).appendTo(uiElems.wordList); //.hide();
         // $("#wordList li:last-child").fadeIn()
-      },clearSpelling: function(){
+      },
+      clearSpelling: function () {
         uiElems.txtSpelledWord.val("");
       },
       deleteWord: function () {
@@ -139,9 +154,9 @@ $(document).ready(function () {
       getWordHTML: function () {
         return wordHTML;
       },
-      scoreUpdate: function (rightScore, wrongScore) {
-        uiElems.txtRightScore.text(rightScore);
-        uiElems.txtWrongScore.text(wrongScore);
+      scoreUpdate: function (scores) {
+        $(uiElems.txtRightScore).text(scores.rightScore);
+        $(uiElems.txtWrongScore).text(scores.wrongScore);
       }
     };
   })();
@@ -161,7 +176,10 @@ $(document).ready(function () {
       });
 
       uiElems.btnLoadWords.on("change", getWordList); //event that sets off the spelling list getting process 
-      uiElems.btnStart.on("click", getWord); //used to get a word from the data structure
+      uiElems.btnStart.on("click", function(){//used to get a word from the data structure
+        getWord();
+        uiElems.spellingInput.css('display', 'flex');
+      });
       uiElems.btnCheck.on("click", checkSpelling); //used to check the spelling
       uiElems.btnRepeat.on("click", getWord); // gets the word from the data structure so that the user can hear it again
 
@@ -221,6 +239,8 @@ $(document).ready(function () {
 
     var getWordList = function (e) {
       onChange(e);
+      UICtrl.setUpSpellingGameUI();
+
     };
 
     var editWordList = function (e) { //start the process to the spelling word list
@@ -272,6 +292,7 @@ $(document).ready(function () {
           "definition": $(textBoxData[2]).val()
         });
       });
+
       return wordListData;
     };
 
@@ -304,20 +325,26 @@ $(document).ready(function () {
       return isValid;
     };
 
+    var readWord = function () {
+      readOutLoud(dataCtrl.getWord);
+    };
+
     var checkSpelling = function () {
-      if (dataCtrl.gameFinished()) {
+      if (dataCtrl.gameFinished()) { //used to stop the user from checking spelling on a finished game
         if (uiElems.txtSpelledWord.val() !== "") { // check if blank
           if (uiElems.txtSpelledWord.val().toLowerCase() === dataCtrl.getWord().toLowerCase()) {
             UICtrl.scoreUpdate(dataCtrl.updateScore(true));
           } else {
             UICtrl.scoreUpdate(dataCtrl.updateScore(false));
           }
-          uiElems.textText.text(words[wordCount].word);
-          readOutLoud(words[wordCount].word);
+          if (!dataCtrl.gameFinished()) { // the game is over and the score will be displayed
+            UICtrl.displayFinalScore(dataCtrl.getFinalScore());
+          } else {
+            readWord();
+          }
         } else { // display error
+          alert("You need to enter");
         }
-      } else { // the game is over and the score will be displayed
-        UICtrl.displayFinalScore();
       }
       UICtrl.clearSpelling();
     };

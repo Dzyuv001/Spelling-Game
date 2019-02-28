@@ -59,6 +59,10 @@ ol {
     margin-bottom: 15px;
 }
 
+#spellingGameControls, #spellingInput {
+   display: none; 
+}
+
 #btnCheck {
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
