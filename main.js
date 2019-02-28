@@ -354,7 +354,7 @@ $(document).ready(function () {
             readWord();
           }
         } else { // display error
-          alert("You need to enter");
+          alert("You need to enter a spelling");
         }
       }
       UICtrl.clearSpelling();
@@ -367,13 +367,15 @@ $(document).ready(function () {
     };
 
     var loadAnotherSpellingTest = function () {
-      restartSpelling(); // TODO : clean this up 
+      dataCtrl.resetData();
+      UICtrl.setUpSpellingGameUI(); // TODO : clean this up 
+      uiElems.btnLoadWords.val("");
       uiElems.spellingInput.hide();
       uiElems.spellingGameControls.hide();
       uiElems.btnRestart.hide();
       uiElems.btnLoadAnother.hide();
-      uiElems.txtLoadWordList.hide();
-      uiElems.btnLoadWords.hide();
+      uiElems.txtLoadWordList.show();
+      uiElems.btnLoadWords.show();
     };
 
     var readOutLoud = function (message) { //Speech Synthesis 
