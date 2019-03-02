@@ -21,13 +21,12 @@
     <div class="container-fluid">
         <div class="container top">
             <input id="tab1" type="radio" name="tabs" checked>
-            <label class="tabLabel" id="tab1Label" for="tab1">Spelling List</label>
+            <label class="tabLabel" id="tab1Label" for="tab1">Spelling Game</label>
             <input id="tab2" type="radio" name="tabs">
-            <label class="tabLabel" id="tab2Label" for="tab2">Spelling game</label>
+            <label class="tabLabel" id="tab2Label" for="tab2">Spelling List</label>
             <section id="content1">
                 <h1 class="text-center">Spelling game</h1>
                 <div class="game-elements">
-                    <p id="textText">Test text</p>
                     <p id="txtScore">Scores : <span id="rightScore">0</span> <span id="wrongScore">0</span></p>
                     <div id="spellingInput" class="input-group mb-3">
                         <input type="text" class="form-control" id="txtSpelledWord" name="txtSpelledWord" placeholder="spell here"
@@ -36,15 +35,15 @@
                             <button class="btn btn-outline-secondary" type="button" id="btnCheck">Check</button>
                         </div>
                     </div>
-                    <div  id="spellingGameControls" class="controls">
+                    <div id="spellingGameControls" class="controls">
                         <button type="button" id="btnRepeat" class="btn btn-primary">Repeat</button>
-                        <button type="button" id="btnSentece" class="btn btn-primary">Use in Sentence</button>
+                        <button type="button" id="btnSentence" class="btn btn-primary">Use in Sentence</button>
                         <button type="button" id="btnDefinition" class="btn btn-primary">Definition</button>
                     </div>
                 </div>
                 <div class="controls">
                     <label id="txtLoadWordList" for="btnLoadWords">Load Spellings</label>
-                    <input type="file" id="btnLoadWords" name="btnLoadWords" accept="text/json"> 
+                    <input type="file" id="btnLoadWords" name="btnLoadWords" accept="text/json">
                     <button type="button" id="btnStart" class="btn btn-primary">Start Game</button>
                     <button type="button" id="btnRestart" class="btn btn-primary">Restart Game</button>
                     <button type="button" id="btnLoadAnother" class="btn btn-primary">Load Another List</button>
@@ -63,21 +62,22 @@
                 <div>
                     <label for="">Word list name</label>
                     <input type="text" class="form-control" id="txtWordListName" placeholder="Word list name">
-                    <p id="txtWordListNameError">The list title textbox can't be blank.</p>
+                    <p id="txtWordListNameError" class="error">The list title textbox can't be blank.</p>
+                    <p id="txtNoWordsError" class="error">Cannot save a spelling list with no words</p>
                 </div>
                 <div id="uiForWordList">
-                    <ol id="wordList" ondrop="drop(event)" ondragover="allowDrop(event)">
-                        <li class="wordContainer col-md-6 col-sm-12" draggable="true" ondragstart="drag(event)">
+                    <ol id="wordList">
+                        <li class="wordContainer col-md-6 col-sm-12">
                             <button class="btn btn-danger btnDeleteWord">Delete Word</button>
                             <label for="txtWord">Word</label>
                             <input type="text" class="form-control txtWord" placeholder="Word">
-                            <p class="txtWordError">The word textbox can't be blank.</p>
+                            <p class="txtWordError" class="error">The word textbox can't be blank.</p>
                             <label for="txtExampleSentence">Example Sentence</label>
                             <input type="text" class="form-control txtExampleSentence" placeholder="Example Sentence">
-                            <p class="txtExampleSentenceError">The example sentence textbox can't be blank.</p>
+                            <p class="txtExampleSentenceError" class="error">The example sentence textbox can't be blank.</p>
                             <label for="txtDefinition">Definition</label>
                             <input type="text" class="form-control txtDefinition" placeholder="Word Definition">
-                            <p class="txtDefinitionError">The definition textbox can't be blank.</p>
+                            <p class="txtDefinitionError" class="error">The definition textbox can't be blank.</p>
                         </li>
                     </ol>
                 </div>

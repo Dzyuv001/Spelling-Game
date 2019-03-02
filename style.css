@@ -95,6 +95,10 @@ ol {
     display: none;
 }
 
+.container {
+ margin-top: 20px;
+}
+
 #txtLoadWordList{
     display: inline;
     margin-right: 20px;
@@ -144,8 +148,7 @@ label {
     float: right;
 }
 
-.txtWordError, .txtExampleSentenceError, 
-.txtDefinitionError, #txtWordListNameError {
+.error {
     color: #900;
     display: none;
 }

@@ -71,10 +71,9 @@ $(document).ready(function () {
 
   var uiController = (function () { //View
     var wordHTML;
-    var uiElems = {
+    var uiElems = { //stores all the classes and ids of all the elements
       tab1Label: $("#tab1Label"),
       tab2Label: $("#tab2Label"),
-      textText: $("#textText"),
       txtScore: $("#txtScore"),
       txtRightScore: "#rightScore", // displays correct answers
       txtWrongScore: "#wrongScore", // displays incorrect answers
@@ -88,7 +87,7 @@ $(document).ready(function () {
       btnLoadWords: $("#btnLoadWords"),
       btnCheck: $("#btnCheck"),
       btnRepeat: $("#btnRepeat"),
-      btnSentece: $("#btnSentece"),
+      btnSentence: $("#btnSentence"),
       btnDefinition: $("#btnDefinition"),
       btnSaveList: $("#btnSaveList"),
       wordList: $("#wordList"),
@@ -100,6 +99,7 @@ $(document).ready(function () {
       txtExampleSentence: ".txtExampleSentence",
       txtDefinition: ".txtDefinition",
       txtWordListName: $("#txtWordListName"),
+      txtNoWordsError: $("#txtNoWordsError"),
       txtWordError: ".txtWordError",
       txtExampleSentenceError: ".txtExampleSentenceError",
       txtDefinitionError: ".txtDefinitionError"
@@ -110,13 +110,13 @@ $(document).ready(function () {
       wordHTML += '<button class="btn btn-danger btnDeleteWord">Delete Word</button>';
       wordHTML += '<label for="txtWord">Word</label>';
       wordHTML += '<input type="text" class="form-control txtWord" placeholder="Word">';
-      wordHTML += '<p class="txtWordError "> An option has been left blank</p>';
+      wordHTML += '<p class="txtWordError" class="error"> An option has been left blank</p>';
       wordHTML += '<label for="txtExampleSentence">Example Sentence</label>';
       wordHTML += '<input type="text" class="form-control txtExampleSentence" placeholder="Example Sentence">';
-      wordHTML += '<p class="txtExampleSentenceError"> An option has been left blank</p>';
+      wordHTML += '<p class="txtExampleSentenceError" class="error"> An option has been left blank</p>';
       wordHTML += '<label for="txtDefinition">Definition</label>';
       wordHTML += '<input type="text" class="form-control txtDefinition" placeholder="Word Definition">';
-      wordHTML += '<p class="txtDefinitionError"> An option has been left blank</p>';
+      wordHTML += '<p class="txtDefinitionError" class="error"> An option has been left blank</p>';
       wordHTML += '</li>';
     };
 
@@ -135,14 +135,15 @@ $(document).ready(function () {
         uiElems.txtScore.text("You got " + scores.rightScore + " out of " + scores.totalWords);
       },
       addWord: function () {
-        $(wordHTML).appendTo(uiElems.wordList); //.hide();
-        // $("#wordList li:last-child").fadeIn()
+        $(wordHTML).appendTo(uiElems.wordList);
+       uiElems.txtNoWordsError.hide();
       },
       clearSpelling: function () {
         uiElems.txtSpelledWord.val("");
       },
-      deleteWord: function () {
-        $(this).parent().remove();
+      deleteWord: function (that, displayNoWordsError) {
+        $(that).parent().remove();
+        displayNoWordsError();
       },
       validateTxt: function (errorClass, that) {
         //used to inform the user if they left a textbox blank
@@ -201,7 +202,7 @@ $(document).ready(function () {
         readOutLoud(dataCtrl.getDefinition());
       });
 
-      uiElems.btnSentece.on("click", function () {
+      uiElems.btnSentence.on("click", function () {
         readOutLoud(dataCtrl.getExampleSentence());
       });
 
@@ -215,8 +216,10 @@ $(document).ready(function () {
       uiElems.btnEditWordList.on("change", editWordList); //event used to start the word List getting process for editing the word
       uiElems.btnSaveList.on("click", saveList); //event that start the saving of the list
       uiElems.btnAddWordUI.on("click", UICtrl.addWord); //start the process of adding ui elements for a word in a spelling game list
-      uiElems.wordList.on("click", uiElems.btnDeleteWord, UICtrl.deleteWord); //start the process to remove a words ui elements
-
+      uiElems.wordList.on("click", uiElems.btnDeleteWord, function(){
+       UICtrl.deleteWord(this,displayNoWordsError); //start the process to remove a words ui elements
+      
+      });
       //events that trigger validation to show error message when textbox are left blank.
       uiElems.txtWordListName.on("input", function () {
         UICtrl.validateTxt("#txtWordListNameError", this);
@@ -318,11 +321,12 @@ $(document).ready(function () {
       isValid = isValidUIData(uiElems.txtDefinition, ".txtDefinitionError", isValid);
       if ($(uiElems.wordContainer).length === 0) {
         isValid = false;
+        UICtrl.validateTxt(".txtDefinitionError", this);
       }
       return isValid;
     };
 
-    var isValidUIData = function (elem, error, isValid) {
+    var isValidUIData = function (elem, error, isValid) { //error validation 
       var valid = true;
       $(elem).each(function () {
         if ($(this).val() === "") {
@@ -336,7 +340,13 @@ $(document).ready(function () {
       return isValid;
     };
 
-    var readWord = function () {
+    var displayNoWordsError = function () {
+      if ($(uiElems.wordContainer).length === 0) {
+        uiElems.txtNoWordsError.show();
+      }
+    };
+
+    var readWord = function () { // used to shorten event declarations
       readOutLoud(dataCtrl.getWord());
     };
 
