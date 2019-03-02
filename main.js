@@ -3,44 +3,46 @@
 
 $(document).ready(function () {
   var dataController = (function () { // Model
-    var editWordList;
-    var textWordList;
-    var activeTab = true;
-    var totalWords;
+    var editWordList;// stores the spelling list for editing
+    var textWordList;// stored the spelling list for game purposes
+    var activeTab = true;//used to see which tab is active
+    var totalWords;//stored the total number of words
     var wordCount = 0; // how many words have been spelled
     var rightScore = 0; // how many words where spelled correctly
     var wrongScore = 0; // how many words where spelled incorrectly
 
     return {
       setActiveTab: function (bool) {
+        //used to set the active tab so that the spelling list data is set correctly
         activeTab = bool;
       },
       setWordListData: function (data) {
+        //used to set the word list data
         if (activeTab) {
           textWordList = data;
-          console.log(textWordList);
-          totalWords = textWordList.words.length;
+          totalWords = textWordList.words.length; // gets the number of words to know how long the game will run for
         } else {
           editWordList = data;
         }
       },
-      getEditWordList: function () {
+      getEditWordList: function () {//used to pass the word list data for editing of a spelling list
         return editWordList;
       },
-      getTextWordList: function () {
+      getTextWordList: function () {//used to pass the word list data for the spelling game
         return textWordList;
       },
-      getWord: function () {
+      getWord: function () {//used to get the current word
         return textWordList.words[wordCount].word;
       },
-      getExampleSentence: function () {
+      getExampleSentence: function () {//used ot get the example sentence of the current word
         return textWordList.words[wordCount].exampleSentence;
       },
-      getDefinition: function () {
+      getDefinition: function () {//used to get the definition of the current word
         return textWordList.words[wordCount].definition;
       },
       updateScore: function (right) {
-        if (right) {
+        //used to update the right and wrong scores of the spelling game and the word counter
+        if (right) {//based on if the user go the question right or wrong the selected score will increment
           rightScore++;
         } else {
           wrongScore++;
@@ -51,7 +53,7 @@ $(document).ready(function () {
           wrongScore: wrongScore
         };
       },
-      getFinalScore: function () {
+      getFinalScore: function () {//gets the final score of the spelling game
         return {
           rightScore: rightScore,
           totalWords: totalWords
@@ -61,7 +63,7 @@ $(document).ready(function () {
         console.log(totalWords + " and " + wordCount);
         return (totalWords > wordCount);
       },
-      resetData: function () {
+      resetData: function () {//used to reset the data of the spelling game
         wordCount = 0;
         rightScore = 0;
         wrongScore = 0;
@@ -123,25 +125,27 @@ $(document).ready(function () {
     setupHTML();
 
     return {
-      getUIElems: function () {
+      getUIElems: function () {//gives access to the selectors dictionary 
         return uiElems;
       },
-      setUpSpellingGameUI: function () {
+      setUpSpellingGameUI: function () {//used to reset the scoreboard 
         uiElems.txtScore.html('Scores : <span id="rightScore">0</span> ' +
           '<span id="wrongScore">0</span>');
         uiElems.spellingGameControls.show();
       },
       displayFinalScore: function (scores) {
+        //used to display the final score of the spelling test
         uiElems.txtScore.text("You got " + scores.rightScore + " out of " + scores.totalWords);
       },
-      addWord: function () {
+      addWord: function () {//used to add UI elems to enter another word for the current word list
         $(wordHTML).appendTo(uiElems.wordList);
        uiElems.txtNoWordsError.hide();
       },
-      clearSpelling: function () {
+      clearSpelling: function () {//used to clear the spelling textbox
         uiElems.txtSpelledWord.val("");
       },
       deleteWord: function (that, displayNoWordsError) {
+        //used to delete the UI elems for a word in the spelling list builder 
         $(that).parent().remove();
         displayNoWordsError();
       },
@@ -155,10 +159,10 @@ $(document).ready(function () {
           $(that).parent().find(errorClass).hide();
         }
       },
-      getWordHTML: function () {
+      getWordHTML: function () {//gets the html elements for a words UI elems
         return wordHTML;
       },
-      scoreUpdate: function (scores) {
+      scoreUpdate: function (scores) {// used to update the score board
         $(uiElems.txtRightScore).text(scores.rightScore);
         $(uiElems.txtWrongScore).text(scores.wrongScore);
       }
@@ -166,8 +170,8 @@ $(document).ready(function () {
   })();
 
 
-  var controller = (function (dataCtrl, UICtrl) {
-    var uiElems = UICtrl.getUIElems();
+  var controller = (function (dataCtrl, UICtrl) {//controller
+    var uiElems = UICtrl.getUIElems();// list of all selectors to reduce erroneous input
     var events = function () { // store all the events
       uiElems.tab1Label.on("click", function () { // changes the active tab so that the correct data structure is used
         dataCtrl.setActiveTab(true);
@@ -193,8 +197,8 @@ $(document).ready(function () {
         uiElems.btnLoadAnother.show();
         uiElems.spellingInput.css('display', 'flex');
       });
-      uiElems.btnRestart.on("click", restartSpelling);
-      uiElems.btnLoadAnother.on("click", loadAnotherSpellingTest);
+      uiElems.btnRestart.on("click", restartSpelling);//events that helps restart the spelling game
+      uiElems.btnLoadAnother.on("click", loadAnotherSpellingTest);//event that help start another spelling test
       uiElems.btnCheck.on("click", checkSpelling); //used to check the spelling
       uiElems.btnRepeat.on("click", getWord); // gets the word from the data structure so that the user can hear it again
 
@@ -203,6 +207,7 @@ $(document).ready(function () {
       });
 
       uiElems.btnSentence.on("click", function () {
+        //events that will trigger the current word to be said in a sentence 
         readOutLoud(dataCtrl.getExampleSentence());
       });
 
@@ -216,24 +221,27 @@ $(document).ready(function () {
       uiElems.btnEditWordList.on("change", editWordList); //event used to start the word List getting process for editing the word
       uiElems.btnSaveList.on("click", saveList); //event that start the saving of the list
       uiElems.btnAddWordUI.on("click", UICtrl.addWord); //start the process of adding ui elements for a word in a spelling game list
-      uiElems.wordList.on("click", uiElems.btnDeleteWord, function(){
+      uiElems.wordList.on("click", uiElems.btnDeleteWord, function(){//event that triggers the deletion of word's word list UI elements
        UICtrl.deleteWord(this,displayNoWordsError); //start the process to remove a words ui elements
       
       });
-      //events that trigger validation to show error message when textbox are left blank.
       uiElems.txtWordListName.on("input", function () {
+      //events that trigger validation to show error message when textbox are left blank.
         UICtrl.validateTxt("#txtWordListNameError", this);
       });
 
       uiElems.wordList.on("input", uiElems.txtWord, function (e) {
+        //event used to help display an error when the user leaves the textbox blank
         UICtrl.validateTxt(".txtWordError", this);
       });
 
       uiElems.wordList.on("input", uiElems.txtExampleSentence, function (e) {
+        //event used to help display an error when the user leaves the textbox blank
         UICtrl.validateTxt(".txtExampleSentenceError", this);
       });
 
       uiElems.wordList.on("input", uiElems.txtDefinition, function (e) {
+        //event used to help display an error when the user leaves the textbox blank
         UICtrl.validateTxt(".txtDefinitionError", this);
       });
     };
@@ -254,7 +262,7 @@ $(document).ready(function () {
       reader.readAsText(file);
     };
 
-    var getWordList = function (e) {
+    var getWordList = function (e) {//used to get the word list for the spelling game
       onChange(e);
     };
 
@@ -267,10 +275,10 @@ $(document).ready(function () {
         uiElems.wordList.empty();
         wordListData.words.forEach(function (w, i) {
           uiElems.wordList.append(UICtrl.getWordHTML());
-          var qCon = $($(uiElems.wordContainer)[i]);
-          qCon.find(uiElems.txtWord).val(w.word);
-          qCon.find(uiElems.txtExampleSentence).val(w.exampleSentence);
-          qCon.find(uiElems.txtDefinition).val(w.definition);
+          var con = $($(uiElems.wordContainer)[i]);//short form for word container
+          con.find(uiElems.txtWord).val(w.word);
+          con.find(uiElems.txtExampleSentence).val(w.exampleSentence);
+          con.find(uiElems.txtDefinition).val(w.definition);
         });
       }, 1000);
     };
@@ -310,7 +318,7 @@ $(document).ready(function () {
       return wordListData;
     };
 
-    var isWordListValid = function () {
+    var isWordListValid = function () {//used to presence check the input on the word-list builder page.
       var isValid = true; //if at any point this changes to false the game will not save
       if (uiElems.txtWordListName.val() === "") {
         isValid = false;
@@ -326,7 +334,7 @@ $(document).ready(function () {
       return isValid;
     };
 
-    var isValidUIData = function (elem, error, isValid) { //error validation 
+    var isValidUIData = function (elem, error, isValid) {//used to shorten the validation for each textbox type in the word-list builder
       var valid = true;
       $(elem).each(function () {
         if ($(this).val() === "") {
@@ -341,6 +349,7 @@ $(document).ready(function () {
     };
 
     var displayNoWordsError = function () {
+      //error message display function that will run when there are no words listed in the word list builder
       if ($(uiElems.wordContainer).length === 0) {
         uiElems.txtNoWordsError.show();
       }
@@ -350,7 +359,7 @@ $(document).ready(function () {
       readOutLoud(dataCtrl.getWord());
     };
 
-    var checkSpelling = function () {
+    var checkSpelling = function () {//used to check user input and perform the majority of the spelling-game game-loop
       if (dataCtrl.gameFinished()) { //used to stop the user from checking spelling on a finished game
         if (uiElems.txtSpelledWord.val() !== "") { // check if blank
           if (uiElems.txtSpelledWord.val().toLowerCase() === dataCtrl.getWord().toLowerCase()) {
@@ -370,13 +379,13 @@ $(document).ready(function () {
       UICtrl.clearSpelling();
     };
 
-    var restartSpelling = function () {
+    var restartSpelling = function () {//used to restart the spelling game
       dataCtrl.resetData();
       UICtrl.setUpSpellingGameUI();
       readWord();
     };
 
-    var loadAnotherSpellingTest = function () {
+    var loadAnotherSpellingTest = function () {//used to start another spelling game
       dataCtrl.resetData();
       UICtrl.setUpSpellingGameUI(); // TODO : clean this up 
       uiElems.btnLoadWords.val("");
