@@ -1,6 +1,3 @@
-// dictioanry githubusercontent.com/matthewreagan/WebstersEnglishDictionary/master/dictionary.json
-//https://raw.githubusercontent.com/matthewreagan/WebstersEnglishDictionary/master/dictionary_alpha_arrays.json
-
 $(document).ready(function () {
   var dataController = (function () { // Model
     var editWordList;// stores the spelling list for editing
@@ -60,7 +57,6 @@ $(document).ready(function () {
         };
       },
       gameFinished: function () { //compares the number of words spelled to how many words left to spell
-        console.log(totalWords + " and " + wordCount);
         return (totalWords > wordCount);
       },
       resetData: function () {//used to reset the data of the spelling game
@@ -112,23 +108,23 @@ $(document).ready(function () {
       wordHTML += '<button class="btn btn-danger btnDeleteWord">Delete Word</button>';
       wordHTML += '<label for="txtWord">Word</label>';
       wordHTML += '<input type="text" class="form-control txtWord" placeholder="Word">';
-      wordHTML += '<p class="txtWordError" class="error"> An option has been left blank</p>';
+      wordHTML += '<p class="txtWordError error"> An option has been left blank</p>';
       wordHTML += '<label for="txtExampleSentence">Example Sentence</label>';
       wordHTML += '<input type="text" class="form-control txtExampleSentence" placeholder="Example Sentence">';
-      wordHTML += '<p class="txtExampleSentenceError" class="error"> An option has been left blank</p>';
+      wordHTML += '<p class="txtExampleSentenceError error"> An option has been left blank</p>';
       wordHTML += '<label for="txtDefinition">Definition</label>';
       wordHTML += '<input type="text" class="form-control txtDefinition" placeholder="Word Definition">';
-      wordHTML += '<p class="txtDefinitionError" class="error"> An option has been left blank</p>';
+      wordHTML += '<p class="txtDefinitionError error"> An option has been left blank</p>';
       wordHTML += '</li>';
     };
 
     setupHTML();
 
     return {
-      getUIElems: function () {//gives access to the selectors dictionary 
+      getUIElems: function () {//gives access to the selectors dictionary
         return uiElems;
       },
-      setUpSpellingGameUI: function () {//used to reset the scoreboard 
+      setUpSpellingGameUI: function () {//used to reset the scoreboard
         uiElems.txtScore.html('Scores : <span id="rightScore">0</span> ' +
           '<span id="wrongScore">0</span>');
         uiElems.spellingGameControls.show();
@@ -145,7 +141,7 @@ $(document).ready(function () {
         uiElems.txtSpelledWord.val("");
       },
       deleteWord: function (that, displayNoWordsError) {
-        //used to delete the UI elems for a word in the spelling list builder 
+        //used to delete the UI elems for a word in the spelling list builder
         $(that).parent().remove();
         displayNoWordsError();
       },
@@ -175,15 +171,13 @@ $(document).ready(function () {
     var events = function () { // store all the events
       uiElems.tab1Label.on("click", function () { // changes the active tab so that the correct data structure is used
         dataCtrl.setActiveTab(true);
-        console.log("spelling list");
       });
 
       uiElems.tab2Label.on("click", function () { // changes the active tab so that the correct data structure is used
         dataCtrl.setActiveTab(false);
-        console.log("spelling game");
       });
 
-      uiElems.btnLoadWords.on("change", function () { //event that sets off the spelling list getting process 
+      uiElems.btnLoadWords.on("change", function () { //event that sets off the spelling list getting process
         getWordList();
         uiElems.btnStart.show();
         uiElems.txtLoadWordList.hide();
@@ -202,12 +196,12 @@ $(document).ready(function () {
       uiElems.btnCheck.on("click", checkSpelling); //used to check the spelling
       uiElems.btnRepeat.on("click", getWord); // gets the word from the data structure so that the user can hear it again
 
-      uiElems.btnDefinition.on("click", function () { //used to trigger the 
+      uiElems.btnDefinition.on("click", function () { //used to trigger the
         readOutLoud(dataCtrl.getDefinition());
       });
 
       uiElems.btnSentence.on("click", function () {
-        //events that will trigger the current word to be said in a sentence 
+        //events that will trigger the current word to be said in a sentence
         readOutLoud(dataCtrl.getExampleSentence());
       });
 
@@ -223,7 +217,7 @@ $(document).ready(function () {
       uiElems.btnAddWordUI.on("click", UICtrl.addWord); //start the process of adding ui elements for a word in a spelling game list
       uiElems.wordList.on("click", uiElems.btnDeleteWord, function(){//event that triggers the deletion of word's word list UI elements
        UICtrl.deleteWord(this,displayNoWordsError); //start the process to remove a words ui elements
-      
+
       });
       uiElems.txtWordListName.on("input", function () {
       //events that trigger validation to show error message when textbox are left blank.
@@ -270,7 +264,6 @@ $(document).ready(function () {
       onChange(e);
       setTimeout(function () { // a timer used to give enough time for the JSON file to be read.
         let wordListData = dataCtrl.getEditWordList();
-        console.log(wordListData);
         uiElems.txtWordListName.val(wordListData.title);
         uiElems.wordList.empty();
         wordListData.words.forEach(function (w, i) {
@@ -283,14 +276,13 @@ $(document).ready(function () {
       }, 1000);
     };
 
-    var download = function (content, fileName, contentType) { //used for file download 
+    var download = function (content, fileName, contentType) { //used for file download
       var a = document.createElement("a");
       var file = new Blob([content], {
         type: contentType
       });
       a.href = URL.createObjectURL(file);
       a.download = fileName;
-      console.log(a);
       a.click();
     };
 
@@ -387,7 +379,7 @@ $(document).ready(function () {
 
     var loadAnotherSpellingTest = function () {//used to start another spelling game
       dataCtrl.resetData();
-      UICtrl.setUpSpellingGameUI(); // TODO : clean this up 
+      UICtrl.setUpSpellingGameUI(); // TODO : clean this up
       uiElems.btnLoadWords.val("");
       uiElems.spellingInput.hide();
       uiElems.spellingGameControls.hide();
@@ -397,7 +389,7 @@ $(document).ready(function () {
       uiElems.btnLoadWords.show();
     };
 
-    var readOutLoud = function (message) { //Speech Synthesis 
+    var readOutLoud = function (message) { //Speech Synthesis
       var speech = new SpeechSynthesisUtterance();
       // Set the text and voice attributes.
       speech.text = message;

@@ -60,7 +60,7 @@ ol {
 }
 
 #spellingGameControls, #spellingInput {
-   display: none; 
+   display: none;
 }
 
 #btnCheck {
@@ -104,7 +104,7 @@ ol {
     margin-right: 20px;
 }
 
-#btnAddQuestionOption, #btnSaveList{
+#btnAddQuestionOption, #btnSaveList, #btnAddWordUI{
     float: right;
     margin-left: 10px;
     margin-right: 10px;
@@ -138,7 +138,12 @@ li.wordContainer {
     margin: 15px 1% 15px 1%;
 }
 
+li:before {
+font-size: 2em;
+}
+
 label {
+    font-weight: bold;
     width: 100%;
     padding-left: 10px;
     padding-top:10px;
